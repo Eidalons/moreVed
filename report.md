@@ -69,11 +69,11 @@
 
 Взаимодействие системы
 
-![Контекст](images/small_uml.png)
+![Контекст](images/kontekst_diagram.jpg)
 
 Сценарий работы
 
-![Сценарий работы](images/1234.png)
+![Сценарий работы](images/base_scenarij.jpg)
 
 ### Компоненты
 
