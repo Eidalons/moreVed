@@ -97,8 +97,8 @@
 ### Негативные сценарии
 |Название сценария|Описание|
 |---|----------------------|
-|НС-1| При компрометации ЦЕКЭОБ на лодку было отправлен неправильный маршрут (нарушение ЦБ 2)|
-|НС-2| При компрометации ЦЕКЭОБ на лодку было отправленно неправильное задание (нарушение ЦБ 1)|
+|НС-1| При компрометации модуля системы управления в ЦЕКЭОБ были направлены невалидные данные о судне (нарушение ЦБ 4, 6)|
+|НС-2| При компрометации модуля системы управления в ОрВД были направлены невалидные координаты (нарушение ЦБ 3)|
 |НС-3| При компрометации модуля связи на судне было полученно неправильное задание (нарушено ЦБ 1)|
 |НС-4| При компрометации модуля связи на судне был получен неправильный маршрут (Нарушено ЦБ 2)|
 |НС-5| При компрометации модуля связи ОрВд не получил / получил недостоверные координаты судна (Нарушено ЦБ 3)|
@@ -107,11 +107,11 @@
 |НС-8| При компрометации модуля связи злоумышленник получил доступ к данным с датчиков (Нарушено ЦБ 5)|
 |НС-9| При компрометации модуля датчиков ЦЕКЭОБ получил недостоверные данные с датчиков (Нарушено ЦБ 4)|
 |НС-10| При компрометации модуля перемещения ОрВД получил недостоверные координаты судна (Нарушено ЦБ 3)|
-|НС-11| При компрометации модуля перемещения судно вышло за пределы авторищированного района (Нарушено ЦБ 2)|
+|НС-11| При компрометации модуля перемещения судно вышло за пределы авторизированного района (Нарушено ЦБ 2)|
 |НС-12| При компрометации модуля перемещения ЦЕКЭОБ не получил / получил недоствоверные координаты (Нарушено ЦБ 4)|
 |НС-13| При компрометации модуля навигации ОрВД получил недостоверные координаты судна (Нарушено ЦБ 3)|
 |НС-14| При компрометации модуля навигации ЦЕКЭОБ получил недостоверные координаты судна (Нарушено ЦБ 6)|
-|НС-15| При компрометации модуля датчиков злоумышленник получил доступ к данным с датчиков (Нарушено ЦБ 5)|
+|НС-15| При компрометации модуля системы управления злоумышленник получил доступ к данным с датчиков (Нарушено ЦБ 5)|
 
 ### Описание Сценариев (последовательности выполнения операций), при которых ЦБ нарушаются
 
@@ -127,100 +127,85 @@
 6. Для запроса авторизации вылета к системе ОрВД используется только аутентичный идентификатор дрона
 7. Только авторизованные получатели имеют доступ к оперативной информации
 
-|Атакованный компонент|ЦБ1|ЦБ2|ЦБ3|ЦБ4|ЦБ5|ЦБ6|ЦБ7|Кол-во нарушений|
-|:--|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
-|1. Связь|🔴|🔴|🔴|🔴|🟢|🔴|🔴|6/7|
-|3. Центральная система управления|🔴|🔴|🔴|🔴|🟢|🟢|🔴|5/7|
-|4. Навигация|🔴|🔴|🔴|🟢|🟢|🟢|🟢|3/7|
-|5. Хранение данных|🟢|🟢|🟢|🔴|🟢|🟢|🔴|2/7|
-|6. Полётный контроллер|🔴|🔴|🔴|🟢|🔴|🟢|🟢|4/7|
-|7. Самодиагностика|🟢|🟢|🔴|🟢|🔴|🟢|🟢|2/7|
-|8. Приводы|🔴|🔴|🔴|🟢|🔴|🟢|🟢|4/7|
-|9. Контроль батареи|🟢|🟢|🔴|🟢|🔴|🟢|🟢|2/7|
+|Атакованный компонент|ЦБ1|ЦБ2|ЦБ3|ЦБ4|ЦБ5|ЦБ6|Кол-во нарушений|
+|:--|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
+|1. Связь|🔴|🔴|🔴|🔴|🟢|🟢|4/6|
+|2. Система анализов|🟢|🟢|🟢|🔴|🟢|🟢|1/6|
+|3. Центральная система управления|🟢|🟢|🔴|🔴|🔴|🔴|4/6|
+|4. Система навигация|🟢|🟢|🔴|🟢|🟢|🔴|2/6|
+|5. Система перемещения|🟢|🔴|🔴|🔴|🟢|🟢|3/6|
 
 🟢 - ЦБ не нарушена 🔴 - ЦБ нарушена
 
 **Негативный сценарий - НС-1:**
 
-![НС-1](/docs/images/ns/ns-1.png)
-
-[Cсылка на исходник диаграммы](//www.plantuml.com/plantuml/uml/vLVBRjjM4DtpAoxSPQm2IVfeZSB8VzHTC1Bh2b18GQGDP6SxSUn0GOKK1LeKI1z0cpMjHyKeDlqBS_-evnvTwVAoL0MZosmCcvp7cJDdPkX7QHOEigCdlI3hPhr8xSWRcSb4SdqcXOpbHW_bdTAd-WKUt-3nYHHuSFzZ9N_8M8zahbyf-E25VgOlQLJ8JCbRUQtkxpxOVRWJ1E5HbiH7Jnv7Ww2FRDrsjn_6cTf1Y0AXp-1rBVb1BBVoNd8J0MbA6TlVHpigJ5Mdc_R3hFtTluBy2kCVv4SQ7IR7_biFA4tQIHohZmPHnpTy2CEt1hu-GxnStkjNh7Tq4EjJ7wP-9hUq6GFkp44qeRD1qakVfdxiJn3x3UqBKljYxH67DRnVmFGtaZm60rCzf5aQ3OwJLFccdnbJAO7qDR2nKQ1m8QMj0MyCFdt24AO7_MuloVmW3yZFbPJwH4cXo3YAH_uvWatvDqBhSmRf3v9sbART-D2FyYcY_4LARbOAQF1EisGG7aQ-w-S4aCkrAHUEkKpWL9BlGXQKHQ7u6d7ni2GxDpAnpFI-xNJ36ful4VINAX56f5T6r5JmJ0ewFmwpB1ey3OB3GNBKL_8pKw0xgnufA6T84k4OE0MgrZvrjAVardL0IYFykUIid2m4nWhMHfZtxkqf9fzGJa3Md2PEiaWbnyW2frtc2JRwoGBPlzSNaXjlFC2imlGABuCMEWeer3JCdvDFSB1kDbWcQewvmNvhw64pPYQF7YgPaa28OaiuduU9b1uJUhIhp02i-pTVpRSpjtCSH7576Gu2b6-fCppRbG0zcxJ0SX0tit8GL-bKoucGXJ5sw63aAcCYsz9MYrtAPKu7jz6CPQLHjhDVcqtopNvbzD7cRQeWykqPN4prLGkh0ZHm2IsmQL_IWxM1K4uEl473C5YDX76o2eSZA3BluNfQ2xooDqPsy4ezifXOoRIw0QlU3UKlsOFnXIaVWylJSCdp00Ickq4lIVgOUcxFgHM2JJUckxmpdMcSUiaz0FjkiO7u1WNpgimCqtpsShMmWxMV5wG6lxhgzGY31jxr-PBtQwAUUe7ifWQKHbUPUQwcMRHtddiKm58_RfbkJDYgKm-FEJ9ZuItxZVBzU2o-ILfDMghQrLBL1vBxVhMs_sOYpg9JlXizrs8h23-Dkp9igTjnbWsMYHo5OMIJIAWnequblqlE2mT2V879R9EtW-03uepmMd81LS-bgjwxMW1x-Uo4dM--bBxdzlRguPOXkNk7Oxjbp73QALfsijKOWCyt7EuMwvKhr7LcOZHZfQ4TqZ7UNTYTgP-pPsLBnlRmbEjpwaxn9hHIt8akTwSt4NMdMJ1h5fZmZ9_B70A-rfULqRZcLZs5IV6VOs0pp7Z4yjKEswpUJXIsi-vnc4ML8AkFd9_gK1Z78TarAmDXvpAkPmCL_8mofDvj2wiFUWch_xE3gGpRkp-bS0l7VGLMkgUgOTqdZREXGrsEdlwt6ZTCuLOVLl48F_2lvZy0)
+![НС-1](/images/neg1.jpg)
 
 **Негативный сценарий - НС-2:**
 
-![НС-2](/docs/images/ns/ns-2.png)
-
-[Cсылка на исходник диаграммы](//www.plantuml.com/plantuml/uml/hLLDRzD04BtxLwpAbI01vKCLGlqVb8D9hH0fjIFRhSIjIUY7r4fL4TS2FT2pQsBYaiJz2xF_Y3TFTTqDZGGIYXJPks_Ul3SpkrvFKZzEjxTwNjfDUu5PaJCfv8TaTYYbv3AtHt9bxC3kOtcEvLqfiV3aaP5pF1Sobip8jHJrYpsGqkW3q0YsUq2UQPmTsKDob58OkP1Ji_hGl5ZnF7yxZSBjhNT1xFMXfTlkzlqmXP9pAP5uYA2PP1iXian9Mo9N9VdDyycAyHEpsKtwVjf-_mV95u0_oMU2Ej6Ek_kt7XYTnC6c_m1_BiTZBONazaGczfZ0TXI6BkOfC1TgtWwH8vEfFMOnJpP2Et1Tsf5S4vF3RT4uLDOqZdh9XyJbNjK24r-oR_kt4Q6_OFSbe5_PmHm57DiZmf8WteaIuqAVAnIWgJs5Dau1El0BA_IWE_YXOgJG5lQxlIXrIJWbSYcLtJMeAEi9yyW_0TbYVVjnr0wIf1jsN9PdOFdEaiph-RadEacZsEy4djUBehwHRv8nyL1Rcnk6Nwbw7RuP7qfiLgp6N0ldDVbDw_KTDMiO_riJo7p7XJCaBa4jYD6LtLjkO24IeKsh4QqpER4ZdHbrW-eVBNFGn9bNBMt_cc7B53CcYk5tSSmMXiYZ4pZb51RiSAdJsRgNWElwdY7jN2hERmbaXXtwbKlu6Yh74gq0raSknzw1qg0rzYDxLhLq5IaAgLHjg3fv_fO9bV9VAzLmBgaIzqphZHxvjmqKfnFG0yfWBvqXC3A1k0egPdWzhCym4ymMAPjBwp_P8h_wwaJBUXz6QM2YdI1MZF5u4qn8zrEbglwC7g7YngoCUTovhxAmNDyCoAaIXnHvsTpAMfMvq0oYMGHs-8gnTW3K6F9ABmWtZKfoPj8v0RM8dCF26RCZC4ovLeAIahbTVs5OkXalrW4WJEDvw_Z7b-ut)
+![НС-2](/images/neg2.jpg)
 
 **Негативный сценарий - НС-3:**
 
-![НС-3.1](/docs/images/ns/ns-3.1.png)
+![НС-3](/images/neg3.jpg)
 
-[Cсылка на исходник диаграммы](//www.plantuml.com/plantuml/uml/XLF1hj905DtFLzpKvNibUJ5nyHOl_8UugD1W4vWsPSeQqA09He9nuKOJDwuhqXH1wY_S-IFFdH8e4VCsCyFSS-QSUmzjZqoGccmuK2OoWv0y_i85_-JSpdZBQpxO1VyYExLpN1zmFU4jBfwsxeY_yTekkRJlMmGMIlQrVISmG0hYxxoYPvvIGMPYdGrVXgbAe1LreoJGXZpmjtXu1iPlpZkQ__2USs53f89sVLvw58oe5usIm7HV_VF8Lu0_yYS7wiVZo-fTg-7IGRgnra_IiATKFuspXFYp4vd3SeuLSWJy0auAEClLMPVy1yU-9nYjU6zN01nmGgibl6vglrmeGP7_N6HUF8YfcvjxWatCjUuOvwjYEZOXnMDeWNJhrCYP_I-PTp3omRw5Dfx01Q82z0UAoYUusKWUagLzWryxbsjb9oWHzgbhe4wvaBuatnnn5A9Z5yGRoKA2V-IvYv70QjKS2hpU4axh6WrcUGhu13y6gKBT8nc4mWnavjXavAWAfS0EMNZfwEjJwUZcJ0beyRyJyDaTGAVEQg5Zkhxleigv54Bpxmna8osngTfOyEdy1G00)
-
-![НС-3.2](/docs/images/ns/ns-3.2.png)
-
-[Cсылка на исходник диаграммы](//www.plantuml.com/plantuml/uml/ZLDDRzD04BtlhnY5O-j8WCGXXwh_Wt0mYLKYjUieNlVS5YX8GLH57BY0r0ldnObbanBp5sR_4M-cfav4KNknz-EzcJVFp_kPYsSkFpeqRk8E4-hnLovvmJwSSSq5hyESVr8u3USuNkFuX6iSFEq_8Rx2fkGbU-BVNFxTX7TSaom01pkyxHDgWXXUX_TQfEQI-3jVqhEUCN7kKfiVlKncPWebaz5a6bi77LTSe-qP6B_O3orQN6lD6eqQBjhrHO_YZCQJR1gxqQj_Ydm3-1D_Lj11Uhnz-z01b9tDad7y28_j6e_x1AL5kE0gV53WABNMc8DPca-9lwZ8SupiyOHS0dQEIKfCvasdcw8zPGv4IiFNuHA0DLQmgcBVoe5pHb22La43KjMB6w-mlhEDGYbwBl9Vx8aHEpk3Xn1jwX9AZo4Fd5qLIEh1VycyWlQFiD1B2HmWEu3-mAM920Ci9G8Ihl06kvK6hGadk2AyJsNcDdQbME6bEX9GIfym9rxgvqSIxoctxUA2cqqVeNMNi2fkq61MjvcwXRVPCOaTanXXu84OZvTyfJQ6Y8sqXPQXlTkLeTtqb80M_Ii1T-e0wYRJHcqWecX0wa4bXCq_24ZgAejCiuy7_kK_)
 
 **Негативный сценарий - НС-4:**
 
-![НС-4](/docs/images/ns/ns-4.png)
+![НС-4](/images/neg4.jpg)
 
-[Cсылка на исходник диаграммы](//www.plantuml.com/plantuml/uml/vLTTRnjL47tVNt5L7XiZjUK38bJrVr0Ujea9bjnTozv4wbi-I9FA4LOH4WWfG2NWUUtOUECccxymznznvkokxrwpnefuvALIxywScJapPyPvDaZ2VhB_iXiadQJRDW_aKcPo9QazbamcSck7SctiaNsDvriy7qg6Xuy-DFAdljXZlAJotbxmwmYcai7y61zl93NsHEveCP7tHCZi2BwNYcHFx7dn9ZE5UsiURPd7M-R9Wo08zvCusd_vejqFUaYmizFfXL62zDxLuPz7SWVSbBY7aYDAMiHuOCA1sUqCUc6oyyq_G7w1yVVo0utsuWF_woFazqucTYHpUq6JdJYAV9idw-f_7jaZFyCc1YhKf1zt1wy67_JRkpw-ydj9dupDUBtqYiALT3-3wQziomG4JEsGPeDs_o0U6D_q4pML7Dc-HNviBHXSu8Lrw1VDqHuIGblGwtJZn0TvJ7h6ajj38vaXuI00yUS0c_B_WBQd1EdruvtsOD29zdoKZu7o1scvhKQWmNkGnFrmh-sxVie4KhdHSk6OoXMSSdAUoO9JaHb-1YuUSx9pArSbCzslTplXIZwV0_JdEX7smiXOPS2Pdqb6vnTXahJxhu9Whn_lzupyn13eJjKZWy4PaaGu1cu0JUifnsZRo9thWEGw-ND9MJbP2DHAhJ6N3nzk6mQ_uaWXi-OmKPoqJNo0A73QAiPrhPyi4FqxUoQfUkC1aeNf61-3ba4AqsAkOVvjmISfPBELPMRDnQ2vtoazRCPCuzYXaIa9n51iWFDvk9BSOyAEjemAODc_UILlPrxAE6X7kqOv251-IPtoN6u4pBE6HIuGOnCh46sTJbCeGXPgxBA3aQkCWSgMjbhiKYfpEhYLffQrHYqxwuIF1c-Q1-Qy6TjXcYzQM18WW2jeWINxXXwi2bHIC_060SEW4WESgjc68yZHxt0zMW6kxDMeb5nkHsLEh6HQttzrxzQNkkQ-gfTVy0RZCoqVakLLEETbG0RQrw0RnptedRjpkXm1XflGNQwr9urwbzHBuAbRQI2-ONPvJcRADD_ULEiwMFfv87xwtgcp8qWClDlJWlSRPZtrWRYZEGDDhZBpNDaijNUUsno0OdxS6bqRiBLAFJpcY8nLL_GRvVjuBBvfj1fdgMQt4cfLYjpqrSB-Yu6eGZVvJdIknUL0-67SVM5BtNOhsM2PY94f8-k6X3EcqsdaDqbvsq28Fs20QlOsWSl1puWYuQ7axgbVIbC_TJv0TVHAYPskFvA-v-R-sk46bTo_nL6nPgZEKaP5ArkD07nVSxDRh5V6gEjOCPfpfM6fqWc-dPLB4ySbLyEMllBcvCjzwwxmkcmbknzTxaGt4-LVP1FmfzcSQ1ntxdYg0abKyfYgxfmSweSX3JJ3O-OuzfVWRL6BJ5bL8Pnh-jeZgcaXcJkGzz6ehd-0wbi6IARCp_Qy9jaRRliZc6J_AiyomendDQrswrfL1RljS2Vf78JWqO5KFxj-N4s5E2wJBIHMK3vPZSQxEUP5FRdVTJ3_w-DW_ijju6IKlVjTChS7tU_IMlTC7TRzo78sT5WTHr-McumRbyC67rRn3F_Wp-M_0G00)
+
 
 **Негативный сценарий - НС-5:**
 
-![НС-5](/docs/images/ns/ns-5.png)
+![НС-5](/images/neg5.jpg)
 
-[Cсылка на исходник диаграммы](//www.plantuml.com/plantuml/uml/hLLDRn9H5DtFhtYf6qsbHgqV8SRqVrWN8qpeHFg6p4n9t26rjOOggJ5nLRKBNLCAPHZAz2_Szuyyzz8d338B4pSjt7VUUUUUUzvZAuhTCDxRhJkn7zSzjKQdDAGBwfas9TIdgUdGM9ctvX3bASejIb1ujA7e5rTC6vKUJSonh7O1fGJmDXQlgAVCFbqp0bGJncEnYxsdp6JspT6iHaEcEr6RTzMJZJN7SVVYGE_jll92fm5vViLlk3g6kBD5ycrDrs3j2MkBCkhVVEwkAJTILJzgk75bvo-IRm1_fYy2gWNDfTMleCmW-yfqp94LJQcWTzpAwsMw-sZdZFgcIoDpBAXAe7KUyx38hcsTzmlVLnXcMUCmg4TlebkXLytpRxAbiYUHsHt-sQNTfVwU0lfTfjY7OmFJ4LZaXSqWKddeOuO2D34dq2T9WEKfAj87hx16qn8Adbd3hmTndkI1s7CEIrkA4YKJWW4uVmIoWNm7jJaGaaOOLBmeydKjpy9v-ocsJ6rYLkoEuY1qQvxZpBrIfUSBfElhPOM-KxJqoRotJ0h4GxgaH1ABFndNqN8cFatPKgSU10r5FwWdlRGPs5UYQ2puOS56vSoFpuifyrsnng2R1MVKOcjv0jkaxCxCmR8fXJknTMvBUTRpoEnp5haTJBHJq4BEpXUSlfTvBW4cd3hRWCqWyloHKYZ5HGNrc4-wnyiy0_mTu7-ooF-in9459M8c6WP2BlAATEYoalipaJiqb6pAsQMLD58VYDOBr3AvVGcGFQo8gtGEzzhCKU28K5npzFdA8KcWuHozasXa9QxYY25bsrgLRYvu9ZWSf0HbRtdAmxzDezNFpXrkMi_RdRr0HGrJygzprHmf-rB-T-9QK3HA7SIU2ffUo1Zbo6Cq4hPBRbr9Hc0HYr3o0O-Ll3YopgfGjeyJZcI5RT5uFlybu5ivdVM2tMAgZ6eiUp5gcq1FLnLBoaKi5t8heYzJJsTFDHWcKaj0AP9bsVwiYNDNCdwyyhDZ2jycFa7qfnmCyy5UwIAFgvvRYVsc6tkBh-OMZi2l-My0)
 
 **Негативный сценарий - НС-6:**
 
-![НС-6](/docs/images/ns/ns-6.png)
+![НС-6](/images/neg6.jpg)
 
-[Cсылка на исходник диаграммы](//www.plantuml.com/plantuml/uml/vLTDRzj64BtpLopSOym2ITgqDO8W_wFfWR5PLu122Y9j83ShgMi7CYgaAD2YG3y2j3dJibZHiat_XTb_rBUFf9QhKXMC7dCnxDtvUFjctWpzD4c3ONhmek-blRGVgYtvLNAva4o_aaAcSgF7SgdqI7-7uniS7qc1WqSVAnXcC2YCCMuBFU4PBFHhVKhhGd8bx-Mjkh_zOFlXbkS51saS7Rnu7Wwz0TBsTdk384gHz1tyHqYPoxLapoAvbIl9J0JaAsLQ_pxPKa6Yzdh984Xtl_bNaDzW_8FyIAFz-D2zlGzqxsIg9pBNPpJPZQF8jNa8c_S6kNw5K9bSwJE-UV8iqYCNeNujjxIP0cbkqPcewJ3k9oyJD_OdNOpH8meErKV3SC-r_npslvFjAHYOwJ5jat1u62VADNraJAK4tBS0o8g1mWLE-11pOq3g8uOmDHZq-d7g1db0Viwbr4TA2aN6mG3opn5inhyHMXypo60OxuP9qelstIYV8ifVvEMcwO0ExoIDXy5-wBf-HW2PN9ldmZ6J2pYL9BsG1TkYKBn6N1oMPET6Bcfc-b_lzO8LF5yWw2zj8lIPadDsjsdbN0ewFm_ID1o-zBpzONmmKF8pKw14JQ4KEcTC4k7esGvK_XFsqOwIMri1AKtZpoNZoyc2PwoCDHhpthqTnUGNx2aWwquJnMceuaDaWTDsrQzh_MI1xD_h4ycCDmuWMfYUuzBpKL50OMF3_5lo2GwMnGRBH4sz6-otfCSK8pTvz5Z9Z0IYAJQ4StcuaD9XGa-sbL71idxpHj_MlDQn5qPxod3WuVarTORdUYIWdqrQO84QkrY1QjjqgaeHiZ365XsCxCkOg2wfxxDAcSpfO2UQiMmLQbbPgtmKU5C_4FFcs3QcUlob6H9V-PWNe86JQ859-uP-V1i8fN8G0pIClKOIwh7VT3WSGP6vX-l82Uyl9MICQk6LUb8ZutjcxJ7OzlOhS6qIAlPWV698W72v6awv7e30LDVhn_60im_IvnoTBRk1EQUC8PUcF9tIbyn1ySHEDzIWeusvMd93Ei_UDAFRM_evGLRUq1xwUWArWNnzN95_JTGpDn37DTkXorLonzLKZFRMSwVg1RQIdQXh4_gh_CDZZioOUbNHyNmt7X_ljW7xgxkXMdOhgLPLoQ7VpEw_cOY2j2Am-hCbhhl2JMDN3Kjg1rtD1f-978LXP4sJj1lj3ycuva28ss2Ih_Es45n050fN9gTGUsUgzj9p0pJhhvRPyVfrwNfkBgyURnR97IiSLQE6ugnLL5NIxmp0ypNRs-TxiP76N1kJRgmqh4KwnTr9FJwnPafZw9jJRfzoENdjFbw7LegxqXNPcROVhwFBsT3AuwVQd37Pyvpvb0QWD1gP6V5PJRGNHUO19q5ZSRkJyAPwaSpujaezb_JL8qfg8OLTc7SHgba4SiMp0Y49cTVwjANRQyxz4KoA_zHedI7dcisQ0RjUMdjXi9ls3WFmQ8FmCwpHwqyk7WPhmza6kehtwMfAb8bVUwRiTziJweDU4-f_RGcqHrr0-LCAEnBjnsghUgeTrdvvMHiwhFParlwStcpSDISs-F0LJ_43_nh_0m00)
 
 **Негативный сценарий - НС-7:**
 
-![НС-7](/docs/images/ns/ns-7.png)
+![НС-7](/images/neg7.jpg)
 
-[Cсылка на исходник диаграммы](//www.plantuml.com/plantuml/uml/XLNDJjHG5DxtAKx6k4ACFoWwCORtK1TbfcBZq4xQ2max6CAFOfomCZ4XwaBMPPY1Kc1uXNFVoE-SGgTN1jsrlT_FETyvTsOXDNvYLfOxdWbD9w067_28ZpcpFSvvm9TsZy_8RjXjVBx4vtNEyM7-8V5lF6TygTzp7X4FzHKCkuNZ0m7RJRix0HpoFiqzeFc6v_ah9evMbXU3nEkYWB0LTlt8KECfc8V2i3sLFxTVrBR_Dh8RdAEG7aulECFx9byfPi3dfOVjDyXFgHL79eaxwLhgQizfLOBFjSFjYX7vgovK-ll56Op6Q2l7qp4CncgVSo7sd9CUYsyFHmW6pyUgbmQTz-tGNt95NqBqkp2qjx7qHdmaKMkk8ywLlEWR4oHhBlS5k3_KOo0bsRrhdsGrJic5FXUeokz3MGU8QekwiGHcrrL21j4DEx5nHPve04VI5w5JdIoc0VzJYDKchIBT96u5QHf6VtNyxFQQJ66d9axyfO3k9K7RvVCtM8unw0k0Ts_6p8NIFlYjZrWVRp9kcdrTAsLcfab8gq0GN-rEjOMQz0ddiaHJ9yYPrudZBl5FpZI1dW07f7sSANvq5t7YxjRIn1MgqaG4jJYTU-CAt2GZR72t_f6aomHraagpRFaKCMBZTDbwTk-E3kfflfgLYz4atHt131MbTEzwIr5bjUr0dkgbx_EG7Z-wxzqSa5EFTfE968GsR9_mKd2XKvOI-sL5TyuLDbVQKI5vs4_LPF_V4NIgVM-Axq16gjWpxQmFRP3B-WgGAxXmo-lMf9OQdbJ6m1TgUVq3uOOuM_C45AnphznTUYCh_wu-QDa8-rapg5eQbh7S8fNlqDm1UjglCF5uUYWZBuZQNZlmMoPSzKrGly3U0ixmX_07)
 
 **Негативный сценарий - НС-8:**
 
-![НС-8](/docs/images/ns/ns-8.png)
+![НС-8](/images/neg8.jpg)
 
-[Cсылка на исходник диаграммы](//www.plantuml.com/plantuml/uml/VLHDQjjG4Dxh58ExJ1neKqenfUGUTHTggeL1UJAI7EWkLcZQebAH0uJIJTUg8YLA6ibNcBbHlpTObKmSOp3uwNlVppTZ7KMn6yQB4z-9Px7lqOYlkE9hpYNXcWjk9EKxagLSuBZ1yHdNE7XzGFoJM_uhbvAiGNoFWqOIGF00dqhE0Bkob-HSlYf1pHNnRxwav_lqOfyEHuxZBkB0B4u-UA4pXvVPyMpkcfX6XmSMMQqfSsXzLmVPrCYIQtXAyFI1S_m-vvLY2iYgZ6GZSYCw3amS1dxqAThaVccDARxMi1V_RnZtT1EgKJLsWLobf0gBlF0qY6WJ-kfnArEphHQbiBddCp-8wLdeVNGSFmZcHFnB8vG05vntZHMayUui5I5pgnaJRjLOOpCuVLOQl-tPz_Ocn2kTN8wRbNKYANojh1EkzEnRrvhJkng_ixxU3wWcwWB5Vx41QTYwPF83BBLy9WtyeDxBBNJhwc1hAm5N6mIIEef7fkucuXIeTgLrDlrMxPJ5xRuVpL7nBVInL9BORP-QnwoI3KjzCxRBCL4XBRxKwd5NqW6k3peKrA0OgNP-RtVMZbXtkEQRJWwdjqXGQee6-6jkfwOV_TDJXW9gxFwVQYkZjG38L1gokyVRkIorX9k-Mj3n7ysSQ_cov5PZUmQBUuHll47-0G00)
 
 **Негативный сценарий - НС-9:**
 
-![НС-9](/docs/images/ns/ns-9.png)
+![НС-9](/images/neg9.jpg)
 
-[Cсылка на исходник диаграммы](//www.plantuml.com/plantuml/uml/bLJDQjjW4BphAJvSUWe9BVqtfUGzcXwKH2q6HJAI7CWjTcZQubAHQo6KNdfsPAbHNCj-XTqtwkpAjlmbpY4OZFLzExEpisFjneaR9RqZtqawYU-P5brIGMCQyO1AogZY8TqOxlCvZYiSdrA9WpSxXdxHZFxn1Ghh8fhWeE81Id21Jy6dABiK49_nLoKegJ3qXoxCYvRZkBqa37f7-rxaTA6YSz3fka5YMizsfAPOa8tGvRlsJlS2xbC9DGFSJcc4vpEQQqs6Xjg0qvPnOtCG1aaK-l59R7E_0lTlr4yXCgSIlyP0pPIpf8bmKcdq6cGudEd85OsLDlRyZuSTzvDDAdRyRAONmOQkn4HrhA1ImVjkadZHYOrzhXx90ANwVhuQ8N2FxTBNuhhAoKGz3nUIekCmDdRfoxiBmc0RDgGKieXknmyJyoZo3Xt73yEkWK_gQOxYZ4RBvML6_RuHgeq-qSXfp3VRxnhshQsseRbQ8WieH0aFeMikIgZGis_BDJehd4NIrlxOrnSPpQm7W5F-0Np9d-imJbLrRXFLTa7AHYWL5fI7JbtV83521ZldQc7LXFgUXi0rRgZsWgxH6H7HT0mm_Xq-JjSjVBijKMXh2xKvLwE1vQ5jjTLAXyFgrDiwsFagw7-NZN1w3TMvAgzGFwRPNj2i6DjSn1Ryg_Y37IXiBwNSF7tos5bUt1R1VIL7GD0uDNYOq0JZJzM2jCxDVNb15ond-TBHaK6X8wXS6Gw3hTlzNWBymUO0ZgwaZwYPg8CB6pOXwoq_D1qr-Y4PyGByqNRnZPVlVm00)
 
 **Негативный сценарий - НС-10:**
 
-![НС-10](/docs/images/ns/ns-10.png)
+![НС-10](/images/neg10.jpg)
 
-[Cсылка на исходник диаграммы](//www.plantuml.com/plantuml/uml/hLJFRjDm3Bx_di8gnss8COHGXT3UWt8eMm-LigHAqadSjauCK13L7c12N7OEMSAoTKbVmNuZFhk496X87BXKYlFPtnyxtO_YSHZFZpmNJsDlGWE-v8AlEPK5bvnn9GdVafpAESeLoYTSeh3xv37nLtl8kEPS4ZnVwcivauy6BRaWlk8BsjscfzkqDt1kF8y3VtxqTXAw6LYd1zFPs8zfi8VcAssI1KQcl9BFnhKS-NBA9TWNU7lFAPxFU6sOZ5SR6baEQ1pHGU37OU15xwB-x6ScJF6bsJh_tU6FZ_lG5tzwCbWq2O-3Y1w5ayC-_Bd20Lp91VHPK2EVxr0n7_f6DSg9ZL7liwaNnEIS5mGp8lvc5d80CqwRn38oUxSwXk2vDeyBharOfHvSwvLsNhMJjxQ6n6lRKOhEGbL80arhLS65rJurgRbMKNV8qFWH-GUrHTsyPIbVq5_AUpARzwOwxm_Qn0Kf3xPoqMkLnFsAT-Ur1locwOUH2f3lQXkPI88xgE4d8IvnZJf34xRBABi2eA1DnxmKV0CbE2b0STM80-DuRUkfcZ2waRxSqTCOcb2ZoItuLEaxk5Pobz0iOw6M-9rUBEUDJlxHqA5w0tkvfL01Vytro6yN__STWm61Dj_XvYkX3O4ECshGFhIJVstz7nkP-8VExUCN_om_0G00)
+
 
 **Негативный сценарий - НС-11:**
 
-![НС-11](/docs/images/ns/ns-11.png)
+![НС-11](/images/neg11.jpg)
 
-[Cсылка на исходник диаграммы](//www.plantuml.com/plantuml/uml/bLJDJjj04BxlKunIzOIeYleVLHNlKNemu5QHZ1tP3X8t4bJQAbKjhfLGrGjd4vnYGkoymkmRzPinnd4KfFQ2yExCz_FDPBUZs0dZmO5dubxikTJXSvxo5QTsn3bFkB1ZlY4xjASuBd1yp3aEjhQU4F_IZmcNdDanli_bsfxOhrgQyvJuWi_eHSSOPn07_k1WrmrD7tozlLxVyMFgF4FRXPJR4S1IlhNVbINPyUsGS_2ES3ld5DydlD2Q2TzM13Rfa1FHNk37OU15Hr4R-nMmVwD-BW8X9uMjWal5p7acc9oJNWlOY4lrK_2LmaQkzt6_vtngWxu1w4_fKC6b22Q-rBXW7hfoRTvrujWDZzgzpoKZDP1hmgVt5dpdi5twUZNUEqdXOH3Hez3TRvU_b79LSmOXEZEOcothbD3iiSB8CFezBuZ962y8-eISDDECI_2bzV0cf7dV2CpQd3WrJVYq-Qv1tjZe4Yyq4Xd0L5JOCJGjH0MevEnRFKRJA5e6wIe_vlL5RD7o0jZ4_a1_RZ-JsfohwgmDLCK5AMjRuR1fbOXDLTzqmi84KIuqlg9PwWS8qTUa8ThHSGrch8XknmZsL_5WVZd2jvko2bsbq9Wp3HgzaBTKjqAbvZ0wpRPQxEn-qV_KH3YzXkfCbHTSOdxbZj-C6DEyMrl1hzU_IzA5wIMSqTRJnwQ-e5M_GmN7We0u8NpCU0RxSuqWgVRceNq12uPJFo_L4q2L1PKBSsAiYVkVkzVqDXF-tyruBp-z3qstKF6b61FxC_cdpbqUb-h14LLoBWhNhP3hxnkpZRzuXVy2)
 
 **Негативный сценарий - НС-12:**
 
-![НС-12](/docs/images/ns/ns-12.png)
+![НС-12](/images/neg12.jpg)
 
-[Cсылка на исходник диаграммы](//www.plantuml.com/plantuml/uml/XLRBJkjM59sVhpYYGn8aeFI1KCL_D1sOn4qZ1Jko7IHcFCe31JMYwg2gHAyOt3isINnZyaX-OPy_kklis3avmIYpSBBMtckl_GZ7OUG4KVkqAQ96r7Jb5ZrJGdsArHMbrAEfwj2RL9Vg5izJF5zGYeVTlHr9_z4Ctr_XQKPZzIZfbMd009i2yAm_gsjrpzoK4abVw4dkb-J1bX1EE_Azzkc96uWMD3IgZPRZHL3mGYaINe4qeRZYqPp65Ei0dAcNVUvkIIUKjKROSgBg7--2_0_mt_GFW-h-cVtjBiIzK4zrQQWU6LBrFS_6xEzejKbMOQmhP0Ew5KzTsWhLDSqPquFInAZJKQF0RuRdeHtxUpP7urFs-dR9y9mrgJy1-ebTxw7uWUemB7I3Cp-KDlG73ULUF44RTmxkZLQxfFMf2mwXxMyrcdva1zbZQrvffYuafPBDHl78FqIm0V-DqEg6WxG2l-g6OSEhsr4E4EKpMpBDUr_03YC_SEgkJVsH1SGqqUM265CVf1dxdTA89oAL_3NYud76xaofdpdJ_BtMSDRq_BnnN9byuaIH6vpBxmAt9aGzyDijIVzo7hGeRvJ4v7JOIR25cK1P_eNdw53ItBG1dp3tGugvVBP2Q9H6Op2tjmybA-ZpJ45USHhFZrpfdo4BI2NE8pxaqGZP_r9t56is7h31WBxYIr56Mo651nlmFzbK6B7iEAncrRpyMlkSFT8TINGUrP4qO1Sn6Hl2sJxqQMOveRebgRTWsSHXljy6dksnSBsQr1u8b9zPfttEJWA6MgU5befNx4h5MxLJBjQ2HXfir05aAkD4MKlBPUvIJ4Ccc8EcaIkDMdRMR3uQl6aUMFFcs2QcF2hZKi00la4ZdDW7Pd1Li98N1smOq17vHiYZN_LS_rREnnnqMAHH271fXS-HELT3insSgMwcZwiQh1x3bHYs2Glt0BlJ9c1x-PVXddyTe41tLpHzluNLvnCwM0u29-endTvqPmfNds8xjRbkiBzWWlbN9T5-yzj3VhN5acS5MPE_UkzL5ui6zzNDmlq9gnvOWR9p3Ic5L4eiAhTCumtpS346F4NcedwOyBtr2GsH6LTlqM-KRyVZuei6h72YFkxo-aBoqSzlzzSy4LwNyszMpxGu6mXpytW7I_PvfXU46qjmHde3QC85TiqXorUPFGTiR6w8ECP7_DFp3G00)
 
 **Негативный сценарий - НС-13:**
 
-![НС-13](/docs/images/ns/ns-13.png)
+![НС-13](/images/neg13.jpg)
 
-[Cсылка на исходник диаграммы](//www.plantuml.com/plantuml/uml/XLRDJlDM4DtxAQxI9KabIkaFgYhUetHX4ZUD5Ep8Tf3O0Ia_AAWHLHTL9Lgn-5YR9FuI4X9UOUuRVMV6pdKk66LHARq-SsRcp9dXsuzYDuoxHsqdRiLjJrNedb8QKQBFQKf3MkW-FIjzfY_nlC3pAKtniBtpjQ87IkY5bZJ6KuAO1Iq1vBWP9OgcYh_YTOgtfGGkQ8IuUwRHFNtDb7XD5JtIdTgfgjsAuxZTEF2xHuTUw7HGMglUwhX-h2f8DnNw5BJ9WK-lDAT4w4-HPfZ_7bIK6wb6A-guSVttToJ_0VmN_IsWPd1iVzsMfePwG1DzAv1wuFisXXj_vCBrEQWIckjRqMLmuEipkqBTerV1355fQgeJrZWCsj59P7D_A-8mVYeZk3GHllkcr1y0_Lyq7V84T5zWaHSU1v6oeTyn5A2vlaDjCb2eDyEBzC1Vk3vzAXGiVwVL3cARv1kHveddA9DbiT4yyaz0DfR_1xM-499E6DIzA6hvJPjb5ooVH9B5QlObqL4SX6xJiqE_tsGu49KxBbUc_LkZvJRLLw7Ni9b_1FE_wsheMuLEiG5YzvIcmd3enh4NdYZ7QOP1jwFe7qc46QqcfM2TlaY9IAUmeAhzB4RQK_HQp06_OFm99TA_QE4m2cXsvjRMdfBi8p4LIYjFumUnfu9ZP45GDJFiXt4qG_O_zHKb78q7R3QWJ_Zer1HA66VE1lmFKHKYc953QwuwFmefcc5zP2Gfvz5zHMDH4DROG6VhCAAbfOGUL1MlWPdYn2ouWUUBx7X-Gx463jhFfMETyvi0L-V7wC0lLmMsMPDJPNj1CmONrG5KT2Q9yf7MQZAbX2OSi7xHW5mRb9biiVeOy2O_ICsRkGjEzLCDfm82o16QuSRUI8Hq1IbbSn0D0VgEMGa4vUP68CJXxmWziuX_uSNvjMOMYQ7v-Ytr8AzC-Xclty5r3glzJ3V0hhXzBAxyKRZ6VpskWEVgj8EWWwsNwpas5f14mqpsPvv9wTQ3mavj3Xk4B_6k_459MMbvkraTRCV4MIHloby_zNg05OFk-YBJ_KMg7bj4-QL6AQMXb5gXCYp65v5xcG74FyKn_J3XU-bJsAh7jowRDzgt-QJv4ckLU-dZARzTHLubSxO_hnBXjN2-MRfYnBaXYcidsrSrHrckEZs0RguGCsFlquiqE30dp9mdqHomUN4zd7tyn3-3lW00)
+**Негативный сценарий - НС-14:**
+![НС-13](/images/neg14.jpg)
+
+**Негативный сценарий - НС-15:**
+![НС-13](/images/neg15.jpg)
 
 ## Переработанная архитектура
 

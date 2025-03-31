@@ -25,11 +25,14 @@ class Point:
     def distance(self, second):
         steps = 5
         diff = [(second.x - self.x) / steps , (second.y - self.y) / steps]
-        for i in range(steps):
+        for i in range(steps - 1):
             self.x += diff[0]
             self.y += diff[1]
-            time.sleep(2)
+            time.sleep(1)
             print("Moving to next coordinate, current x , y " , self.x , "\t" , self.y)
+        self.x = second.x
+        self.y = second.y
+        print("Moving to next coordinate, current x , y " , self.x , "\t" , self.y) 
         return self  
 
     def __repr__(self):
@@ -43,12 +46,12 @@ class Boat:
         self.sensors_data = []
         
     def start_moving(self):
-        time.sleep(5)
+        time.sleep(2)
         for i in range(len(current_route)):
             self.current_point.distance(self.route[i])
             record_sensors_data()
             send_informatoin_to_services()
-            time.sleep(5)
+            time.sleep(2)
         print("route_complete!")
 
 
@@ -86,7 +89,7 @@ def send_informatoin_to_services():
         global boat_instance
         try:
             print(f"[{MODULE_NAME}] send current coordinate to orvd")
-            json_data_orvd = {"current_coordinates_x":boat_instance.current_point.x, "current_coordinates_y":boat_instance.current_point.y}
+            json_data_orvd = {"current_coordinates_x:":boat_instance.current_point.x, "current_coordinates_y":boat_instance.current_point.y}
             response_orvd = requests.post(ORVD_URL, json = json_data_orvd)
 
             json_data_ckob = {"current_coordinates_x":boat_instance.current_point.x, "current_coordinates_y":boat_instance.current_point.y, "sensors_data": boat_instance.sensors_data  }
