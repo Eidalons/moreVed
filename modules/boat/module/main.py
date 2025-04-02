@@ -86,7 +86,7 @@ def start():
     route = list(data.get("route"))
     boat = Boat(route)
     threading.Thread(target=boat.start_moving).start()
-    return jsonify({"status": "Boat started moving", "Point_count": len(boat.route)}), 200
+    return jsonify({"status": "Boat started moving"}), 200
 
 
 def start_web():
