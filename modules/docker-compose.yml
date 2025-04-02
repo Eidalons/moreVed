@@ -7,11 +7,7 @@ services:
       MODULE_NAME: boat
     ports:
       - "8001:8000"
-    depends_on:
-      - ckob
-      - orvd
       
-
   ckob:
     build: ./ckob
     container_name: ckob
@@ -20,7 +16,7 @@ services:
     ports:
       - "8002:8000"
     depends_on:
-      - orvd
+      - boat
 
   orvd:
     build: ./orvd
@@ -29,3 +25,5 @@ services:
       MODULE_NAME: orvd
     ports:
       - "8003:8000"
+    depends_on:
+      - boat     

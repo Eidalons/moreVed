@@ -1,40 +1,35 @@
+from flask import Flask, request, jsonify
 import requests
-import time
-import os
-import random
-from flask import Flask, jsonify, request
-import threading
-from werkzeug.exceptions import HTTPException
+import random 
 
-HOST = '0.0.0.0'
-PORT = 8000
-MODULE_NAME = os.getenv('MODULE_NAME')
 app = Flask(__name__)
 
+class Orvd():
+    def __init__(self):
+        pass
 
-@app.route('/confirm_route', methods=['POST'])
-def confirm_route():
-    try:
-        print(f"[{MODULE_NAME}] receive route to confirm")
-        if (random.randint(0 , 3) >= 1):
-            print("Route confirmed")
-            return jsonify({"confirm": "YES"}) , 200
-        else:
-            return jsonify({"confirm": "NO"}) , 200
-    except requests.RequestException as e:
-        print(f"[{MODULE_NAME}] Error getting route: {e}")
-    return jsonify({"status": "NO RESULT"})
+    def route_check(self):
+        data = request.get_json()
+        route = list(data.get("route"))
+        result = False if (random.randint(0, 3) == 0) else True
+        return jsonify({"route_approve": result}), 200
 
-@app.route('/current_coordinates', methods = ['POST'])
-def current_coordinates():
-    try:
-        print(f"[{MODULE_NAME}] receive current coordinates")
-        return jsonify({"status": "OK , keep moving"}) , 200
-    except requests.RequestException as e:
-        print(f"[{MODULE_NAME}] Error getting route: {e}")
-    return jsonify({"status": "NO RESULT"})
+    def log_boat_pos(self):
+        data = request.get_json()
+        boat_pos = data.get("current_pos")
+        print(f"Boat current pos log: {boat_pos}")
+        return jsonify({"status": "Boat current pos successfully logged"}), 200
+
+orvd = Orvd()
+
+@app.route('/route-check', methods=['POST'])
+def route_check():
+    return orvd.route_check()
+
+@app.route('/log-boat-pos', methods=['POST'])
+def log_boat_pos():
+    return orvd.log_boat_pos()
 
 def start_web():
-    threading.Thread(target=lambda: app.run(
-        host=HOST, port=PORT, debug=True, use_reloader=False
-    )).start()
+    app.run(host='0.0.0.0', port=8000, threaded=True)
+    

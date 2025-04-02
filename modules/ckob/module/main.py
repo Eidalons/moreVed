@@ -1,67 +1,76 @@
+from flask import Flask, request, jsonify
 import requests
-import time
-import os
-from flask import Flask, jsonify, request
-import threading
 import random
-from werkzeug.exceptions import HTTPException
 
-HOST = '0.0.0.0'
-PORT = 8000
-MODULE_NAME = os.getenv('MODULE_NAME')
 app = Flask(__name__)
 
-current_route = [[random.randint(1, 100), random.randint(1, 100)] for x in range(5)]
-confirmation = False
-BOAT_URL = 'http://boat:8000/start_route'
-ORVD_URL = 'http://orvd:8000/confirm_route'
+BOAT_START_URL = "http://boat:8000/start_boat"
+ORVD_ROUTE_CHECK_URL = "http://orvd:8000/route-check"
 
-def send_route_to_orvd():
-    global confirmation
-    global current_route
-    try:
-        print(f"[{MODULE_NAME}] send route to orvd")
-        json_data = {"route": current_route}
-        response = requests.post(ORVD_URL, json = json_data)
-        response_data = response.json()
-        if (response_data.get("confirm") == "YES"):
-            confirmation = True
-            print("route confirmed!")
-        else:
-            print("route rejected , resend request with new route")
-            confirmation = False
-            current_route = [[random.randint(1, 100), random.randint(1, 100)] for x in range(5)]
-            send_route_to_orvd()
-    except requests.RequestException as e:
-        print(f"[{MODULE_NAME}] Error send route: {e}")
 
-def send_route_to_boat():
-    global current_route
-    global confirmation
-    while (confirmation is False):
-        time.sleep(1)
-    try:
-        print(f"[{MODULE_NAME}] send route to boat")
-        json_data = {"route": current_route}
-        response = requests.post(BOAT_URL, json = json_data)
-    except requests.RequestException as e:
-        print(f"[{MODULE_NAME}] Error send route: {e}")
+class Ckob:
+    def __init__(self):
+        self.route = []
 
-@app.route('/receive_coordinates' , methods = ['POST'])
-def receive_coordinates():
-    try:
-        print(f"[{MODULE_NAME}] receive current coordinates from boat")
-        response_data = request.get_json()
-        print(response_data)
-        return jsonify({"status": "got coordinates and data from sensors"}) , 200
-    except requests.RequestException as e:
-        print(f"[{MODULE_NAME}] Error getting route: {e}")
-    return jsonify({"status": "NO RESULT"})
+
+    def send_route_to_boat(self, route):
+        try:
+            payload = {"route": route}
+            response = requests.post(BOAT_START_URL, json=payload)
+            return response.json()
+        except Exception as e:
+            return {"status": "error", "message": str(e)}
+        
+
+    def generate_random_route(self, num_points=5, x_range=(0, 100), y_range=(0, 100)):
+        route = []
+        for _ in range(num_points):
+            x = random.randint(x_range[0], x_range[1])
+            y = random.randint(y_range[0], y_range[1])
+            route.append([x, y])
+        return route
+    
+
+    def request_route_approve(self, route):
+        try:
+            print(f"Request root approve from ORVD")
+            payload = {"route": route}
+            response = requests.post(ORVD_ROUTE_CHECK_URL, json=payload)
+            json_data = response.json()
+            return json_data.get("route_approve")
+        except Exception as e:
+            return {"status": "error", "message": str(e)}
+
+
+    def send_random_route(self):
+        root_approve = False
+        while not root_approve:
+            random_route = self.generate_random_route()
+            root_approve = self.request_route_approve(random_route)
+            if root_approve:
+                self.route = random_route
+
+        result = self.send_route_to_boat(self.route)
+        return jsonify(result), 200
+
+
+ckob = Ckob()
+
+
+@app.route('/log-boat-data', methods=['POST'])
+def log_boat_data():
+    data = request.get_json()
+    boat_pos = data.get("current_pos")
+    sensors_data = data.get("sensors_data")
+    print(f"Boat data log: boat_pos: {boat_pos}, sensors_data: {sensors_data}")
+    return jsonify({"status": "Boat data successfully logged"}), 200
+
+
+@app.route('/start', methods=['GET'])
+def start():    
+    ckob.send_random_route()
+    return jsonify({"status": "CKOB started moving"}), 200
 
 def start_web():
-    time.sleep(10)
-    send_route_to_orvd()
-    send_route_to_boat()
-    threading.Thread(target=lambda: app.run(
-        host=HOST, port=PORT, debug=True, use_reloader=False
-    )).start()
+    app.run(host='0.0.0.0', port=8000, threaded=True)
+    

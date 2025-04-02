@@ -1,115 +1,93 @@
-import requests
-import os
+from flask import Flask, request, jsonify
 import time
-import random
-from flask import Flask, jsonify, request
 import threading
-from werkzeug.exceptions import HTTPException
+import random
+import requests
 
-HOST = '0.0.0.0'
-PORT = 8000
-MODULE_NAME = os.getenv('MODULE_NAME')
 app = Flask(__name__)
-boat_instance = None
-current_route = None
-#state = False
-CKOB_URL = 'http://ckob:8000/receive_coordinates'
-ORVD_URL = 'http://orvd:8000/current_coordinates'
+
+CKOB_BOAT_DATA_LOG_URL = "http://ckob:8000/log-boat-data"
+ORVD_BOAT_POS_LOG_URL = "http://orvd:8000/log-boat-pos"
+
 
 class Point:
-    def __init__(self ,x , y, uid):
+    def __init__(self, uid, x, y):
         self.x = x
         self.y = y
         self.uid = uid
-    
-    def distance(self, second):
-        steps = 5
-        diff = [(second.x - self.x) / steps , (second.y - self.y) / steps]
-        for i in range(steps - 1):
-            self.x += diff[0]
-            self.y += diff[1]
-            time.sleep(1)
-            print("Moving to next coordinate, current x , y " , self.x , "\t" , self.y)
-        self.x = second.x
-        self.y = second.y
-        print("Moving to next coordinate, current x , y " , self.x , "\t" , self.y) 
-        return self  
 
     def __repr__(self):
         return f"Point(uid={self.uid}, x={self.x}, y={self.y})"
     
+    def to_dict(self):
+        return {"uid": self.uid, "x": self.x, "y": self.y}
+
+
 class Boat:
-    def __init__(self, route):
-        self.starting_point = Point(0,0,0)
-        self.current_point = Point(0,0,0)
-        self.route = route
-        self.sensors_data = []
+    def __init__(self, coordinates_array):
+        self.current_point = Point(0, 0, 0)
+        self.is_moving = False
+        self.route = self.format_route(coordinates_array)
         
+
+    def format_route(self, coordinates_array):
+        final_route = [self.current_point]
+        for i, v in enumerate(coordinates_array):
+            final_route.append(Point(i + 1, v[0], v[1]))
+        return final_route
+
     def start_moving(self):
-        time.sleep(2)
-        for i in range(len(current_route)):
-            self.current_point.distance(self.route[i])
-            record_sensors_data()
-            send_informatoin_to_services()
-            time.sleep(2)
-        print("route_complete!")
+        print(f"Boat start moving with route: {self.route}")
+        self.is_moving = True
+        while self.is_moving and self.current_point.uid < len(self.route) - 1:
+            current_point = self.current_point
+            next_point = self.route[self.current_point.uid + 1]
+            print(f"Moving from {current_point} to {next_point}")
+            self.move_to_point(current_point, next_point)
+            self.current_point = next_point
+            self.send_data_to_ckob()
+            self.send_data_to_orvd()
+            time.sleep(3)
+        print("Route completed!")
 
+    def move_to_point(self, current_point, next_point):
+        print(f"Calculating direction from ({current_point.x}, {current_point.y}) to ({next_point.x}, {next_point.y})")
+        print(f"Arrived at ({next_point.x}, {next_point.y})")
 
-@app.route('/start_route', methods=['POST'])
-def start_route():
-    global boat_instance
-    global current_route
-    try:
-        print(f"[{MODULE_NAME}] receive route")
-        response_data = request.get_json()
-        route = list(response_data.get("route"))
-        print("Полученный маршрут" , route)
-        current_route = route
-        transformed_route = transform_route(route)
+    def get_sensors_data(self):
+        radiation = random.randint(0, 4)
+        ph = random.randint(0, 14)
+        return {"radiation": radiation, "ph": ph}
 
-        boat_instance = Boat(transformed_route)
-        print("Create boat")
-        threading.Thread(target=boat_instance.start_moving).start()
-        print("Start moving!")
-        return jsonify({"status": "route started"}) , 200
-    except requests.RequestException as e:
-        print(f"[{MODULE_NAME}] Error getting route: {e}")  
-    return jsonify({"status": "NO RESULT"})
-
-
-
-def transform_route(route):
-    transformed_route = []
-    for i in range(len(route)):
-        transformed_route.append(Point(route[i][0], route[i][1], i))
-    return transformed_route
-
-
-def send_informatoin_to_services():
-        global boat_instance
+    def send_data_to_ckob(self):
         try:
-            print(f"[{MODULE_NAME}] send current coordinate to orvd")
-            json_data_orvd = {"current_coordinates_x:":boat_instance.current_point.x, "current_coordinates_y":boat_instance.current_point.y}
-            response_orvd = requests.post(ORVD_URL, json = json_data_orvd)
+            pos_data = self.current_point.to_dict()  # Преобразуем в словарь
+            sensors_data = self.get_sensors_data()
+            print(f"Send current boat data to CKOB: Pos: {pos_data}, Sensors: {sensors_data}")
+            payload = {"current_pos": pos_data, "sensors_data": sensors_data}
+            response = requests.post(CKOB_BOAT_DATA_LOG_URL, json=payload)
+            json_data = response.json()       
+        except Exception as e:
+            return {"status": "error", "message": str(e)}
+        
+    def send_data_to_orvd(self):
+        try:
+            pos_data = self.current_point.to_dict()  # Преобразуем в словарь
+            print(f"Send current boat pos to ORVD: {pos_data}")
+            payload = {"current_pos": pos_data}  # Пример без использования jsonify
+            response = requests.post(ORVD_BOAT_POS_LOG_URL, json=payload)
+            json_data = response.json()
+        except Exception as e:
+            return {"status": "error", "message": str(e)}
 
-            json_data_ckob = {"current_coordinates_x":boat_instance.current_point.x, "current_coordinates_y":boat_instance.current_point.y, "sensors_data": boat_instance.sensors_data  }
-            response_ckob = requests.post(CKOB_URL, json = json_data_ckob)
+@app.route('/start_boat', methods=['POST'])
+def start():
+    data = request.get_json()
+    route = list(data.get("route"))
+    boat = Boat(route)
+    threading.Thread(target=boat.start_moving).start()
+    return jsonify({"status": "Boat started moving", "Point_count": len(boat.route)}), 200
 
-            response_data_orvd = response_orvd.json()
-            response_data_ckob = response_ckob.json()
-            print("ordv answer : " , response_data_orvd , "\t" , "ckob answer",response_data_ckob)
-
-        except requests.RequestException as e:
-            print(f"[{MODULE_NAME}] Error send route: {e}")
-
-def record_sensors_data():
-    global boat_instance
-    radiation = random.randint(0, 4)
-    ph = random.randint(0, 14)
-    data = [ph , radiation]
-    boat_instance.sensors_data.append(data)
 
 def start_web():
-    threading.Thread(target=lambda: app.run(
-        host=HOST, port=PORT, debug=True, use_reloader=False
-    )).start()
+    app.run(host='0.0.0.0', port=8000, threaded=True)
