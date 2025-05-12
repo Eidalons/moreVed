@@ -1,0 +1,299 @@
+services:
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.2.0
+    container_name: zookeeper
+    environment:
+      - ZOOKEEPER_CLIENT_PORT=2181
+      - ZOOKEEPER_TICK_TIME=2000
+    ports:
+     - "2181:2181"
+
+  broker:
+    image: confluentinc/cp-kafka:7.2.0
+    container_name: broker
+    ports:
+      - "9092:9092"
+    expose:
+     - "29092"
+    depends_on:
+      - zookeeper
+    env_file: ./modules/broker/config/.env
+
+  ckob:
+    build: ./modules/ckob
+    container_name: ckob
+    environment:
+      MODULE_NAME: ckob
+    ports:
+      - "8002:8000"
+    entrypoint:
+      - bash
+      - -c
+      - |
+        sleep 60 && venv/bin/python start.py /shared/config.ini
+
+  orvd:
+    build: ./modules/orvd
+    container_name: orvd
+    environment:
+      MODULE_NAME: orvd
+    ports:
+      - "8003:8000"
+    entrypoint:
+      - bash
+      - -c
+      - |
+        sleep 60 && venv/bin/python start.py /shared/config.ini
+
+  monitor:
+    build: ./modules/monitor
+    entrypoint:
+      - bash
+      - -c
+      - |
+        sleep 60 && venv/bin/python start.py /shared/config.ini
+    container_name: monitor
+    environment:
+      - MODULE_NAME=monitor
+    volumes:
+      - ./shared:/shared
+
+  communication:
+    build: ./modules/communication
+    entrypoint:
+      - bash
+      - -c
+      - |
+        sleep 60 && venv/bin/python start.py /shared/config.ini
+    container_name: communication
+    environment:
+      - MODULE_NAME=communication
+      - MODULE_PORT=8000
+    volumes:
+      - ./shared:/shared
+    ports:
+      - 8004:8000
+
+  crypto:
+    build: ./modules/crypto
+    entrypoint:
+      - bash
+      - -c
+      - |
+        sleep 60 && venv/bin/python start.py /shared/config.ini
+    container_name: crypto
+    environment:
+      - MODULE_NAME=crypto
+      - MODULE_PORT=6067
+    volumes:
+      - ./shared:/shared
+    ports:
+      - 6067:6067
+
+  complex:
+    build: ./modules/complex
+    entrypoint:
+      - bash
+      - -c
+      - |
+        sleep 60 && venv/bin/python start.py /shared/config.ini
+    container_name: complex
+    environment:
+      - MODULE_NAME=complex
+      - MODULE_PORT=6068
+    volumes:
+      - ./shared:/shared
+    ports:
+      - 6068:6068
+
+  emergency_stop:
+    build: ./modules/emergency_stop
+    entrypoint:
+      - bash
+      - -c
+      - |
+        sleep 60 && venv/bin/python start.py /shared/config.ini
+    container_name: emergency-stop
+    environment:
+      - MODULE_NAME=emergency-stop
+      - MODULE_PORT=6069
+    volumes:
+      - ./shared:/shared
+    ports:
+      - 6069:6069
+
+  gnss_navigation:
+    build: ./modules/gnss_navigation
+    entrypoint:
+      - bash
+      - -c
+      - |
+        sleep 60 && venv/bin/python start.py /shared/config.ini
+    container_name: gnss-navigation
+    environment:
+      - MODULE_NAME=gnss-navigation
+      - MODULE_PORT=6070
+    volumes:
+      - ./shared:/shared
+    ports:
+      - 6070:6070
+
+  internal_navigation:
+    build: ./modules/internal_navigation
+    entrypoint:
+      - bash
+      - -c
+      - |
+        sleep 60 && venv/bin/python start.py /shared/config.ini
+    container_name: internal-navigation
+    environment:
+      - MODULE_NAME=internal-navigation
+      - MODULE_PORT=6071
+    volumes:
+      - ./shared:/shared
+    ports:
+      - 6071:6071
+
+  message_processing:
+    build: ./modules/message_processing
+    entrypoint:
+      - bash
+      - -c
+      - |
+        sleep 60 && venv/bin/python start.py /shared/config.ini
+    container_name: message-processing
+    environment:
+      - MODULE_NAME=message-processing
+      - MODULE_PORT=6072
+    volumes:
+      - ./shared:/shared
+    ports:
+      - 6072:6072
+
+  movement_calculation:
+    build: ./modules/movement_calculation
+    entrypoint:
+      - bash
+      - -c
+      - |
+        sleep 60 && venv/bin/python start.py /shared/config.ini
+    container_name: movement-calculation
+    environment:
+      - MODULE_NAME=movement-calculation
+      - MODULE_PORT=6073
+    volumes:
+      - ./shared:/shared
+    ports:
+      - 6073:6073
+
+  movement_control:
+    build: ./modules/movement_control
+    entrypoint:
+      - bash
+      - -c
+      - |
+        sleep 60 && venv/bin/python start.py /shared/config.ini
+    container_name: movement-control
+    environment:
+      - MODULE_NAME=movement-control
+      - MODULE_PORT=6074
+    volumes:
+      - ./shared:/shared
+    ports:
+      - 6074:6074
+
+  route_control:
+    build: ./modules/route_control
+    entrypoint:
+      - bash
+      - -c
+      - |
+        sleep 60 && venv/bin/python start.py /shared/config.ini
+    container_name: route-control
+    environment:
+      - MODULE_NAME=route-control
+      - MODULE_PORT=6075
+    volumes:
+      - ./shared:/shared
+    ports:
+      - 6075:6075
+
+  sensors:
+    build: ./modules/sensors
+    entrypoint:
+      - bash
+      - -c
+      - |
+        sleep 60 && venv/bin/python start.py /shared/config.ini
+    container_name: sensors
+    environment:
+      - MODULE_NAME=sensors
+      - MODULE_PORT=6076
+    volumes:
+      - ./shared:/shared
+    ports:
+      - 6076:6076
+
+  battery_charge_control:
+    build: ./modules/battery_charge_control
+    entrypoint:
+      - bash
+      - -c
+      - |
+        sleep 60 && venv/bin/python start.py /shared/config.ini
+    container_name: battery-charge-control
+    environment:
+      - MODULE_NAME=battery-charge-control
+      - MODULE_PORT=6077
+    volumes:
+      - ./shared:/shared
+    ports:
+      - 6077:6077
+
+  servo:
+    build: ./modules/servo
+    entrypoint:
+      - bash
+      - -c
+      - |
+        sleep 60 && venv/bin/python start.py /shared/config.ini
+    container_name: servo
+    environment:
+      - MODULE_NAME=servo
+      - MODULE_PORT=6078
+    volumes:
+      - ./shared:/shared
+    ports:
+      - 6078:6078
+
+  task_execution_control:
+    build: ./modules/task_execution_control
+    entrypoint:
+      - bash
+      - -c
+      - |
+        sleep 60 && venv/bin/python start.py /shared/config.ini
+    container_name: task-execution-control
+    environment:
+      - MODULE_NAME=task-execution-control
+      - MODULE_PORT=6079
+    volumes:
+      - ./shared:/shared
+    ports:
+      - 6079:6079
+
+  telemetry_transmission:
+    build: ./modules/telemetry_transmission
+    entrypoint:
+      - bash
+      - -c
+      - |
+        sleep 60 && venv/bin/python start.py /shared/config.ini
+    container_name: telemetry-transmission
+    environment:
+      - MODULE_NAME=telemetry-transmission
+      - MODULE_PORT=6081
+    volumes:
+      - ./shared:/shared
+    ports:
+      - 6081:6081

@@ -11,7 +11,8 @@ class Orvd():
     def route_check(self):
         data = request.get_json()
         route = list(data.get("route"))
-        result = False if (random.randint(0, 3) == 0) else True
+        print(f"Requested route spprove: {route}")
+        result = True
         return jsonify({"route_approve": result}), 200
 
     def log_boat_pos(self):

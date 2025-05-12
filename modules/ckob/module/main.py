@@ -4,7 +4,7 @@ import random
 
 app = Flask(__name__)
 
-BOAT_START_URL = "http://boat:8000/start_boat"
+BOAT_START_URL = "http://communication:8000/start_boat"
 ORVD_ROUTE_CHECK_URL = "http://orvd:8000/route-check"
 
 
@@ -16,7 +16,9 @@ class Ckob:
     def send_route_to_boat(self, route):
         try:
             payload = {"route": route}
+            print(f"Sent route to boat: {route}")
             response = requests.post(BOAT_START_URL, json=payload)
+            print (response.json)
             return response.json()
         except Exception as e:
             return {"status": "error", "message": str(e)}
@@ -33,7 +35,7 @@ class Ckob:
 
     def request_route_approve(self, route):
         try:
-            print(f"Request root approve from ORVD")
+            print(f"Request route approve from ORVD")
             payload = {"route": route}
             response = requests.post(ORVD_ROUTE_CHECK_URL, json=payload)
             json_data = response.json()
@@ -50,6 +52,7 @@ class Ckob:
             if root_approve:
                 self.route = random_route
 
+        print(f"Send route to boat: {self.route}")
         result = self.send_route_to_boat(self.route)
         return jsonify(result), 200
 
