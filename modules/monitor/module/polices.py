@@ -28,7 +28,7 @@ policies = (
     {"src": "emergency-stop", "dst": "message-processing", "opr": "emergency_stop"},
     {"src": "movement-control", "dst": "servo", "opr": "move_to"},
     {"src": "movement-control", "dst": "route-control", "opr": "move_to"},
-    {"src": "movement-calculation", "dst": "route-control", "opr": "move_to"},
+    {"src": "movement-calculation", "dst": "route-control", "opr": "move_to"}
  
 )
 
