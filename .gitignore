@@ -1,0 +1,7 @@
+*.pyc
+storage/data/*
+pycache
+*.log
+*.zip
+.vscode
+updater/tmp/*
