@@ -64,7 +64,7 @@ ckob = Ckob()
 def log_boat_data():
     data = request.get_json()
     boat_pos = data.get("current_coords")
-    sensors_data = [data.get("param1") , data.get("param2") 
+    sensors_data = [data.get("param1") , data.get("param2") ]
     print(f"Boat data log: boat_pos: {boat_pos}, sensors_data: {sensors_data}")
     return jsonify({"status": "Boat data successfully logged"}), 200
 

@@ -22,7 +22,6 @@ ORVD_BOAT_POS_LOG_URL = "http://orvd:8000/log-boat-pos"
 _requests_queue: multiprocessing.Queue = None
 _response_queue: multiprocessing.Queue = None
 
-
 app = Flask(__name__)
 
 
