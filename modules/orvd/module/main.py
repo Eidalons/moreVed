@@ -11,7 +11,7 @@ class Orvd():
     def route_check(self):
         data = request.get_json()
         route = list(data.get("route"))
-        print(f"Requested route spprove: {route}")
+        print(f"Requested route approve: {route}")
         result = True
         return jsonify({"route_approve": result}), 200
 
