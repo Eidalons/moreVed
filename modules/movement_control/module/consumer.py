@@ -22,7 +22,6 @@ def validate_movement(instructions , next_point):
             "operation": "move_to",
             "next_point": next_point
         })
-    pass
 
 def handle_event(id, details_str):
     """ Модуль сбора данных. """

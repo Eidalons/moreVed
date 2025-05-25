@@ -60,6 +60,11 @@ class Ckob:
 ckob = Ckob()
 
 
+@app.route('/finish')
+def finish():
+    print("ROUTE SUCCESSFULLY COMPLETED!")
+    return jsonify({"status": "confirm"}), 200
+
 @app.route('/log-boat-data', methods=['POST'])
 def log_boat_data():
     data = request.get_json()

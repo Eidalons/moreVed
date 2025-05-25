@@ -2,6 +2,7 @@ import os
 import json
 import threading
 
+from time import sleep
 from random import randint
 from uuid import uuid4
 from confluent_kafka import Consumer, OFFSET_BEGINNING
@@ -33,7 +34,12 @@ def set_battery(health):
 
 def validate_movement(point):
     global current_route, next_point
-    next_point = point
+    if (point[0] == current_route[len(current_route) - 1][0]) and (point[1] == current_route[len(current_route) - 1][1]):
+        sleep(10)
+        proceed_to_deliver(uuid4().__str__(), {
+            "deliver_to": "message-processing",
+            "operation": "route_complete",
+        })
     if point in current_route:
         print("[ROUTE CONTROL] movement_confirmed!")
     else:
@@ -43,7 +49,6 @@ def validate_movement(point):
             "operation": "emergency_stop",
             "code": 2
         })
-        pass
 
 
 def set_route(route):
@@ -61,7 +66,6 @@ def validate_coords(coords):
             "operation": "emergency_stop",
             "code": 1
         })
-        pass
 
 def handle_event(id, details_str):
     details = json.loads(details_str)
@@ -88,7 +92,9 @@ def handle_event(id, details_str):
 
     if operation == "set_coords":
         coords = details.get("coords")
-        validate_coords(coords)
+        current_coords = coords
+        if len(current_route) != 0:
+            validate_coords(current_coords)
 
     
 

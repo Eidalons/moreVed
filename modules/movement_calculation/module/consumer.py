@@ -1,7 +1,7 @@
 import os
 import json
 import threading
-
+from time import sleep
 from random import randint
 from uuid import uuid4
 from confluent_kafka import Consumer, OFFSET_BEGINNING
@@ -11,15 +11,19 @@ MODULE_NAME: str = os.getenv("MODULE_NAME")
 
 current_route = []
 
-def set_route(route):
+def move_move(route):
     global current_route
     current_route = route
-    proceed_to_deliver(uuid4().__str__(), {
-            "deliver_to": "route-control",
-            "operation": "move_to",
-            "next_point": route[1], ##########
-            "instructions":[1,2,3] #########
-        })
+    for point in range(0 , len(route) - 1):
+        proceed_to_deliver(uuid4().__str__(), {
+                "deliver_to": "movement-control",
+                "operation": "move_to", 
+                "current_point": route[point],
+                "next_point": route[point + 1],
+                "instructions":[randint(0, 180) , randint(-10 , 10)] 
+            })
+        print(f"calculate instruction to point number {point} of  ")
+        sleep(7)
 
 
 def handle_event(id, details_str):
@@ -35,8 +39,9 @@ def handle_event(id, details_str):
 
     if operation == "set_route":
         route = details.get("route")
-        set_route(route)
         print("[movement calculation] get new route. Start calculating....")
+        move_move(route)
+        
         
 
 

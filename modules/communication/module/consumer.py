@@ -15,6 +15,7 @@ app = Flask(__name__)
 
 CKOB_BOAT_DATA_LOG_URL = "http://ckob:8000/log-boat-data"
 ORVD_BOAT_POS_LOG_URL = "http://orvd:8000/log-boat-pos"
+CKOB_FINISH = "http://ckob:8000/finish"
 MODULE_NAME: str = os.getenv("MODULE_NAME")
 INIT_PATH: str = "/shared/init"
 
@@ -55,6 +56,12 @@ def handle_event(id, details_str):
 
     print(f"[info] handling event {id}, "
           f"{source}->{deliver_to}: {operation}")
+
+    if operation == "route_complete":
+        try:
+            responce = requests.get(CKOB_FINISH)
+        except Exception as e:
+            return {"status": "error", "message": str(e)}
 
     if operation == "send_telemetry":
         telemetry = details.get("telemetry")

@@ -22,8 +22,7 @@ In any case there shall be docker-compose locally available - at least for runni
 ### Running complete demo in containerized mode
 
 execute in VS Code terminal window either
-- _make all_
-- or _docker-compose up_
+- _make run_
 
 then wait about 1 minute. Open the requests.rest file in Visual Studio Code editor. If you have the REST client extension installed, you will see 'Send request' active text above GET ,you can click on it.
 
@@ -51,3 +50,7 @@ and see the imitate of boat moving
 #### Troubleshooting
 
 - if kafka or zookeeper containers don't start, make sure you don't have containers with the same name. If you do, remove the old containers and run the demo again.
+- to run test and _make all_ scenario you need manually install pipenv
+- if after _make all_ you see output like this: [Building wheel for confluent-kafka (pyproject.toml): started
+  Building wheel for confluent-kafka (pyproject.toml): finished with status 'error'
+Failed to build confluent-kafka] try to install librdkafka package. Then try _make all_ again

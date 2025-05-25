@@ -102,6 +102,12 @@ def handle_event(id, details_str):
         send_emergency_internal(code)
         print(["[CRYPTO] accepted commant to stop by emergency"])
 
+    if operation == "route_complete":
+        proceed_to_deliver(uuid4().__str__(), {
+            "deliver_to": "communication",
+            "operation": "route_complete"
+        })
+
     print(f"[info] handling event {id}, "
           f"{source}->{deliver_to}: {operation}")
     

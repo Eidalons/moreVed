@@ -21,15 +21,17 @@ policies = (
     {"src": "internal-navigation", "dst": "complex", "opr": "set_internal_coords"},
     {"src": "internal-navigation", "dst": "complex", "opr": "set_internal_coords"},
     {"src": "battery-charge-control", "dst": "route-control", "opr": "set_battery"},
-    {"src": "route_control", "dst": "emergency-stop", "opr": "emergency_stop"},
-    {"src": "route_control", "dst": "emergency-stop", "opr": "emergency_stop"},
+    {"src": "route-control", "dst": "emergency-stop", "opr": "emergency_stop"},
+    {"src": "route-control", "dst": "emergency-stop", "opr": "emergency_stop"},
     {"src": "emergency-stop", "dst": "servo", "opr": "emergency_stop"},
     {"src": "emergency-stop", "dst": "message-processing", "opr": "emergency_stop"},
     {"src": "emergency-stop", "dst": "message-processing", "opr": "emergency_stop"},
     {"src": "movement-control", "dst": "servo", "opr": "move_to"},
     {"src": "movement-control", "dst": "route-control", "opr": "move_to"},
-    {"src": "movement-calculation", "dst": "route-control", "opr": "move_to"}
- 
+    {"src": "movement-calculation", "dst": "movement-control", "opr": "move_to"},
+    {"src": "route-control" , "dst": "message-processing", "opr": "route_complete"},
+    {"src": "message-processing" , "dst": "crypto", "opr": "route_complete"},
+    {"src": "crypto" , "dst": "communication", "opr": "route_complete"}
 )
 
 def check_operation(id, details) -> bool:

@@ -19,7 +19,7 @@ MODULES := monitor \
 
 SLEEP_TIME := 20
 
-all:
+run:
 	docker-compose up --build -d
 	sleep ${SLEEP_TIME}
 
@@ -33,8 +33,19 @@ all:
 			--partitions 1; \
 	done
 
+all: clean pipenv run delay30s test
+
+delay30s:
+	sleep 30
+
 clean:
 	docker-compose down
 
 logs:
 	docker-compose logs -f --tail 100
+
+pipenv:
+	pipenv install -r requirements.txt
+
+test: 
+	pipenv run pytest -sv

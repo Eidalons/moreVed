@@ -417,15 +417,18 @@ policies = (
     {"src": "gnss-navigation", "dst": "complex", "opr": "set_gnss_coords"},
     {"src": "internal-navigation", "dst": "complex", "opr": "set_internal_coords"},
     {"src": "internal-navigation", "dst": "complex", "opr": "set_internal_coords"},
-    {"src": "battery_charge_control", "dst": "route-control", "opr": "set_battery"},
-    {"src": "route_control", "dst": "emergency-stop", "opr": "emergency_stop"},
-    {"src": "route_control", "dst": "emergency-stop", "opr": "emergency_stop"},
+    {"src": "battery-charge-control", "dst": "route-control", "opr": "set_battery"},
+    {"src": "route-control", "dst": "emergency-stop", "opr": "emergency_stop"},
+    {"src": "route-control", "dst": "emergency-stop", "opr": "emergency_stop"},
     {"src": "emergency-stop", "dst": "servo", "opr": "emergency_stop"},
     {"src": "emergency-stop", "dst": "message-processing", "opr": "emergency_stop"},
     {"src": "emergency-stop", "dst": "message-processing", "opr": "emergency_stop"},
     {"src": "movement-control", "dst": "servo", "opr": "move_to"},
     {"src": "movement-control", "dst": "route-control", "opr": "move_to"},
-    {"src": "movement-calculation", "dst": "route-control", "opr": "move_to"}
+    {"src": "movement-calculation", "dst": "movement-control", "opr": "move_to"},
+    {"src": "route-control" , "dst": "message-processing", "opr": "route_complete"},
+    {"src": "message-processing" , "dst": "crypto", "opr": "route_complete"},
+    {"src": "crypto" , "dst": "communication", "opr": "route_complete"}
 )
 
 def check_operation(id, details) -> bool:
@@ -456,6 +459,7 @@ _Предполагается, что в ходе подготовки рабо�
 
 **make all**
 
-запуск тестов:
+Запуск всего проекта вместе с тестами, (предполагается что все необходимые пакеты установлены)
 
 **make test**
+Запуск тестов (при условии что система запущена)
