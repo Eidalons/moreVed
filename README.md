@@ -47,6 +47,9 @@ after this message execute
 
 and see the imitate of boat moving
 
+## Tests
+- To run test execute _make test_ or pytest -sv when system is running (expect that required packages were installed)
+
 #### Troubleshooting
 
 - if kafka or zookeeper containers don't start, make sure you don't have containers with the same name. If you do, remove the old containers and run the demo again.
