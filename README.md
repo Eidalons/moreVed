@@ -48,7 +48,7 @@ after this message execute
 and see the imitate of boat moving
 
 ## Tests
-- To run test execute _make test_ or pytest -sv when system is running (expect that required packages were installed)
+- To run test execute _make test_ or _pytest -sv_ when system is running (expect that required packages were installed)
 
 #### Troubleshooting
 
