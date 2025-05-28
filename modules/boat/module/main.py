@@ -7,6 +7,7 @@ import requests
 app = Flask(__name__)
 
 CKOB_BOAT_DATA_LOG_URL = "http://ckob:8000/log-boat-data"
+CKOB_BOAT_FINISH_LOG_URL = "http://ckob:8000/log-boat-finish-data"
 ORVD_BOAT_POS_LOG_URL = "http://orvd:8000/log-boat-pos"
 
 
@@ -48,7 +49,13 @@ class Boat:
             self.send_data_to_ckob()
             self.send_data_to_orvd()
             time.sleep(3)
-        print("Route completed!")
+        try:
+            payload = {"status": "route finished"}
+            response = requests.post(CKOB_BOAT_FINISH_LOG_URL, json=payload)
+            json_data = response.json()
+        except Exception as e:
+            return {"status": "error", "message": str(e)}
+         
 
     def move_to_point(self, current_point, next_point):
         print(f"Calculating direction from ({current_point.x}, {current_point.y}) to ({next_point.x}, {next_point.y})")
@@ -79,6 +86,7 @@ class Boat:
             json_data = response.json()
         except Exception as e:
             return {"status": "error", "message": str(e)}
+
 
 @app.route('/start_boat', methods=['POST'])
 def start():

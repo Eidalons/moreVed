@@ -66,10 +66,20 @@ def log_boat_data():
     return jsonify({"status": "Boat data successfully logged"}), 200
 
 
+@app.route('/log-boat-finish-data', methods=['POST'])
+def log_boat_finish_data():
+    data = request.get_json()
+    finish_status = data.get("status")
+    if finish_status == "route finished":
+        print("ROUTE SUCCESSFULLY COMPLETED!")
+    return jsonify({"status": "Boat route finish successfully logged"}), 200
+
+
 @app.route('/start', methods=['GET'])
 def start():    
     ckob.send_random_route()
     return jsonify({"status": "CKOB started moving"}), 200
+
 
 def start_web():
     app.run(host='0.0.0.0', port=8000, threaded=True)
