@@ -396,7 +396,7 @@
 |11. Приводы|complex|
 |12. Контроль выполнения задания|task-execution-control|
 |13. Датчики|sensors|
-|14. telemetry-transmission|
+|14. Отправка телеметрии|telemetry-transmission|
 |15. Аварийная остановка|emergency-stop|
 |ОрВД|ordv|
 |ЦEКОЭБ|ckob|
