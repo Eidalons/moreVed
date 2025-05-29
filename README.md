@@ -42,5 +42,9 @@ and see the imitate of boat moving
 ## Tests
 - To run test execute _make test_ or _pytest -sv_ when system is running (expect that required packages were installed)
 
+- Output _make test_ command
+
+![alt text](images/test_output.png)
+
 #### Troubleshooting
 - to run test and _make all_ scenario you need manually install pipenv
