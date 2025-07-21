@@ -16,12 +16,14 @@ The Monitor checks whether particular request is authorized and valid, then deli
 There are two main options for running the demo:
 - local (using local development environment), then there shall be installed python (tested with version 3.8), also having *make* tool is recommended
 - containerized (using docker containers)
-
 In any case there shall be docker-compose locally available - at least for running message broker (Kafka).
 
 ### Running complete demo in containerized mode
 
 execute in VS Code terminal window either
+- _make prepare_
+
+Then
 - _make run_
 
 then wait about 1 minute. Open the requests.rest file in Visual Studio Code editor. If you have the REST client extension installed, you will see 'Send request' active text above GET ,you can click on it.

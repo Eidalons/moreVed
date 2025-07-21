@@ -1,5 +1,7 @@
 SHELL := bash
 
+PATH_PREFIX := $(CURDIR)
+
 MODULES := monitor \
            communication \
 		   crypto \
@@ -20,7 +22,7 @@ MODULES := monitor \
 SLEEP_TIME := 20
 
 run:
-	docker-compose up --build -d
+	docker-compose up -d
 	sleep ${SLEEP_TIME}
 
 	for MODULE in ${MODULES}; do \
@@ -32,6 +34,10 @@ run:
 			--replication-factor 1 \
 			--partitions 1; \
 	done
+
+permissions:
+	chmod a+w $(PATH_PREFIX)/shared/coords
+	chmod a+w $(PATH_PREFIX)/shared/init
 
 all: clean pipenv run delay30s test
 
@@ -46,6 +52,8 @@ logs:
 
 pipenv:
 	pipenv install -r requirements.txt
+
+prepare: permissions pipenv 
 
 test: 
 	pipenv run pytest -sv
